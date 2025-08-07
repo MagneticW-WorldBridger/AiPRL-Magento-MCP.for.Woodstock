@@ -6,18 +6,22 @@ const { z } = require('zod');
 const axios = require('axios');
 const dotenv = require('dotenv');
 const { format, parse, parseISO, isValid, addDays, subDays, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, isAfter, isBefore } = require('date-fns');
+const MagentoTokenService = require('./magento-token-service');
 
 // Load environment variables from .env file
 dotenv.config();
 
-// Magento 2 API Configuration
-const MAGENTO_BASE_URL = process.env.MAGENTO_BASE_URL || 'https://your-magento-store.com/rest/V1';
-const MAGENTO_API_TOKEN = process.env.MAGENTO_API_TOKEN;
+// Magento 2 API Configuration (Database-Driven)
+const MAGENTO_BASE_URL = process.env.MAGENTO_BASE_URL || 'https://woodstockoutlet.com/rest/V1';
 const PORT = process.env.PORT || 3000;
 
-// Validate environment variables
-if (!MAGENTO_API_TOKEN) {
-  console.error('ERROR: MAGENTO_API_TOKEN environment variable is required');
+// Initialize Database-Driven Token Service
+let tokenService;
+try {
+  tokenService = new MagentoTokenService();
+  console.log('✅ Database-driven token service initialized');
+} catch (error) {
+  console.error('❌ Failed to initialize token service:', error.message);
   process.exit(1);
 }
 
@@ -240,29 +244,12 @@ const server = new McpServer({
   version: "1.0.0"
 });
 
-// Helper function to make authenticated requests to Magento 2 API
+// Helper function to make authenticated requests to Magento 2 API (Database-Driven)
 async function callMagentoApi(endpoint, method = 'GET', data = null) {
   try {
-    const url = `${MAGENTO_BASE_URL}${endpoint}`;
-    const headers = {
-      'Authorization': `Bearer ${MAGENTO_API_TOKEN}`,
-      'Content-Type': 'application/json'
-    };
-    
-    const config = {
-      method,
-      url,
-      headers,
-      data: data ? JSON.stringify(data) : undefined,
-      httpsAgent: new (require('https').Agent)({
-        rejectUnauthorized: false
-      })
-    };
-    
-    const response = await axios(config);
-    return response.data;
+    return await tokenService.makeAuthenticatedRequest(endpoint, method, data);
   } catch (error) {
-    console.error('Magento API Error:', error.response?.data || error.message);
+    console.error('❌ Magento API Error:', error.response?.data || error.message);
     throw error;
   }
 }
@@ -321,6 +308,24 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
+// Token status endpoint
+app.get('/token/status', async (req, res) => {
+  try {
+    const tokenStatus = await tokenService.getTokenStatus();
+    res.json({
+      status: 'success',
+      timestamp: new Date().toISOString(),
+      token: tokenStatus
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      error: error.message
+    });
+  }
+});
+
 // SSE endpoint for MCP
 app.get('/sse', async (req, res) => {
   console.log('SSE connection request received');
@@ -339,6 +344,7 @@ app.get('/sse', async (req, res) => {
 // Start server
 async function main() {
   // Add health check tool for Railway
+  
   server.tool(
     "health_check",
     "Check if the MCP server is running",
