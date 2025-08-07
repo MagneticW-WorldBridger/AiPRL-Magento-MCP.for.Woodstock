@@ -1383,6 +1383,467 @@ server.tool(
   }
 );
 
+// Tool: Get all categories
+server.tool(
+  "get_all_categories",
+  "Get all categories from the store with pagination support",
+  {
+    page_size: z.number().optional().describe("Number of categories per page (default: 100)"),
+    current_page: z.number().optional().describe("Page number (default: 1)")
+  },
+  async ({ page_size = 100, current_page = 1 }) => {
+    try {
+      const searchCriteria = `searchCriteria[pageSize]=${page_size}&searchCriteria[currentPage]=${current_page}`;
+      const categoriesData = await callMagentoApi(`/categories/list/?${searchCriteria}`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(categoriesData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching categories: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get customer by ID
+server.tool(
+  "get_customer_by_id",
+  "Get detailed information about a customer by their ID",
+  {
+    customer_id: z.number().describe("The ID of the customer")
+  },
+  async ({ customer_id }) => {
+    try {
+      const customerData = await callMagentoApi(`/customers/${customer_id}`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(customerData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching customer: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get product media by SKU
+server.tool(
+  "get_product_media",
+  "Get all media (images, videos) for a product by SKU",
+  {
+    sku: z.string().describe("The SKU (Stock Keeping Unit) of the product")
+  },
+  async ({ sku }) => {
+    try {
+      const mediaData = await callMagentoApi(`/products/${sku}/media`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(mediaData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching product media: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get attribute sets
+server.tool(
+  "get_attribute_sets",
+  "Get all product attribute sets",
+  {
+    page_size: z.number().optional().describe("Number of results per page (default: 20)")
+  },
+  async ({ page_size = 20 }) => {
+    try {
+      const searchCriteria = page_size > 0 ? `searchCriteria[pageSize]=${page_size}` : 'searchCriteria=0';
+      const attributeSetsData = await callMagentoApi(`/products/attribute-sets/sets/list?${searchCriteria}`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(attributeSetsData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching attribute sets: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get color attribute
+server.tool(
+  "get_color_attribute",
+  "Get the color attribute with all its options",
+  {},
+  async () => {
+    try {
+      const colorAttributeData = await callMagentoApi(`/products/attributes/color`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(colorAttributeData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching color attribute: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get brand options
+server.tool(
+  "get_brand_options",
+  "Get all available brand options",
+  {},
+  async () => {
+    try {
+      const brandOptionsData = await callMagentoApi(`/products/attributes/brand/options`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(brandOptionsData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching brand options: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get configurable products
+server.tool(
+  "get_configurable_products",
+  "Get all configurable products with PIM unique ID",
+  {
+    page_size: z.number().optional().describe("Number of results per page (default: 100)"),
+    current_page: z.number().optional().describe("Page number (default: 1)")
+  },
+  async ({ page_size = 100, current_page = 1 }) => {
+    try {
+      const searchCriteria = `searchCriteria[pageSize]=${page_size}&` +
+                            `searchCriteria[currentPage]=${current_page}&` +
+                            `searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&` +
+                            `searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&` +
+                            `searchCriteria[filter_groups][1][filters][0][field]=type_id&` +
+                            `searchCriteria[filter_groups][1][filters][0][value]=configurable&` +
+                            `searchCriteria[filter_groups][1][filters][0][condition_type]=eq`;
+      
+      const configurableProductsData = await callMagentoApi(`/products?${searchCriteria}`);
+      const formattedResults = formatSearchResults(configurableProductsData);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(formattedResults, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching configurable products: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get products with PIM unique key
+server.tool(
+  "get_products_with_pim_key",
+  "Get all enabled products that have a PIM unique ID",
+  {
+    page_size: z.number().optional().describe("Number of results per page (default: 100)"),
+    current_page: z.number().optional().describe("Page number (default: 1)")
+  },
+  async ({ page_size = 100, current_page = 1 }) => {
+    try {
+      const searchCriteria = `searchCriteria[pageSize]=${page_size}&` +
+                            `searchCriteria[currentPage]=${current_page}&` +
+                            `searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&` +
+                            `searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&` +
+                            `searchCriteria[filter_groups][1][filters][0][field]=status&` +
+                            `searchCriteria[filter_groups][1][filters][0][value]=1&` +
+                            `searchCriteria[filter_groups][1][filters][0][condition_type]=eq`;
+      
+      const productsData = await callMagentoApi(`/products?${searchCriteria}`);
+      const formattedResults = formatSearchResults(productsData);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(formattedResults, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching products with PIM key: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get product by Loft ID
+server.tool(
+  "get_product_by_loft_id",
+  "Get product by Loft ID (searches products with loft_id field)",
+  {
+    loft_id: z.string().describe("The Loft ID to search for")
+  },
+  async ({ loft_id }) => {
+    try {
+      const searchCriteria = `searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&` +
+                            `searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&` +
+                            `searchCriteria[filter_groups][1][filters][0][field]=loft_id&` +
+                            `searchCriteria[filter_groups][1][filters][0][value]=${encodeURIComponent(loft_id)}&` +
+                            `searchCriteria[filter_groups][1][filters][0][condition_type]=eq`;
+      
+      const searchResults = await callMagentoApi(`/products?${searchCriteria}`);
+      
+      if (!searchResults.items || searchResults.items.length === 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `No product found with Loft ID: ${loft_id}`
+            }
+          ]
+        };
+      }
+      
+      const formattedResults = formatSearchResults(searchResults);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(formattedResults, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching product by Loft ID: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get multiple products by ID list
+server.tool(
+  "get_multiple_products_by_ids",
+  "Get multiple products by providing a list of entity IDs",
+  {
+    entity_ids: z.array(z.number()).describe("Array of product entity IDs to retrieve"),
+    page_size: z.number().optional().describe("Number of results per page (default: 100)")
+  },
+  async ({ entity_ids, page_size = 100 }) => {
+    try {
+      // Convert array to comma-separated string
+      const idList = entity_ids.join(',');
+      
+      const searchCriteria = `searchCriteria[pageSize]=${page_size}&` +
+                            `searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&` +
+                            `searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&` +
+                            `searchCriteria[filter_groups][1][filters][0][field]=entity_id&` +
+                            `searchCriteria[filter_groups][1][filters][0][value]=${encodeURIComponent(idList)}&` +
+                            `searchCriteria[filter_groups][1][filters][0][condition_type]=in`;
+      
+      const productsData = await callMagentoApi(`/products?${searchCriteria}`);
+      const formattedResults = formatSearchResults(productsData);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(formattedResults, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching multiple products: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get pending orders
+server.tool(
+  "get_pending_orders",
+  "Get all orders with pending status",
+  {
+    page_size: z.number().optional().describe("Number of results per page (default: 20)"),
+    current_page: z.number().optional().describe("Page number (default: 1)")
+  },
+  async ({ page_size = 20, current_page = 1 }) => {
+    try {
+      const searchCriteria = `searchCriteria[pageSize]=${page_size}&` +
+                            `searchCriteria[currentPage]=${current_page}&` +
+                            `searchCriteria[filter_groups][0][filters][0][field]=status&` +
+                            `searchCriteria[filter_groups][0][filters][0][value]=pending&` +
+                            `searchCriteria[filter_groups][0][filters][0][condition_type]=eq`;
+      
+      const ordersData = await callMagentoApi(`/orders/?${searchCriteria}`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(ordersData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching pending orders: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
+// Tool: Get customer orders by customer ID
+server.tool(
+  "get_customer_orders_by_id",
+  "Get all orders for a specific customer by customer ID",
+  {
+    customer_id: z.number().describe("The customer ID to search orders for"),
+    page_size: z.number().optional().describe("Number of results per page (default: 20)"),
+    current_page: z.number().optional().describe("Page number (default: 1)")
+  },
+  async ({ customer_id, page_size = 20, current_page = 1 }) => {
+    try {
+      const searchCriteria = `searchCriteria[pageSize]=${page_size}&` +
+                            `searchCriteria[currentPage]=${current_page}&` +
+                            `searchCriteria[filter_groups][0][filters][0][field]=customer_id&` +
+                            `searchCriteria[filter_groups][0][filters][0][value]=${customer_id}&` +
+                            `searchCriteria[filter_groups][0][filters][0][condition_type]=eq`;
+      
+      const ordersData = await callMagentoApi(`/orders/?${searchCriteria}`);
+      
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(ordersData, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching customer orders: ${error.message}`
+          }
+        ],
+        isError: true
+      };
+    }
+  }
+);
+
 // Start the MCP server with stdio transport
 async function main() {
   try {

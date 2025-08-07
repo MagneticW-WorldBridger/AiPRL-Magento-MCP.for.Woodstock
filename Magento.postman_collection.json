@@ -1,0 +1,885 @@
+{
+	"info": {
+		"_postman_id": "c992166f-034c-48fb-96e4-f7e1e02c44a6",
+		"name": "Magento",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47357673",
+		"_collection_link": "https://rvadv8.postman.co/workspace/Magento-aiprlassist~24ecafc4-e474-48c7-a106-fc2076512f88/collection/22629628-c992166f-034c-48fb-96e4-f7e1e02c44a6?action=share&source=collection_link&creator=47357673"
+	},
+	"item": [
+		{
+			"name": "Get Integration Token and Set Magtoken Variable",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"jsonData.replace('\"',\"\");\r",
+							"pm.collectionVariables.set(\"magtoken\", jsonData);\r",
+							"console.log(jsonData);\r",
+							"console.log(pm.collectionVariables.get(\"magtoken\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"jlasse@aiprlassist.com\",\r\n    \"password\": \"bV38.O@3&/a{\"\r\n}"
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/all/V1/integration/admin/token",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"all",
+						"V1",
+						"integration",
+						"admin",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Schema All",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/all/schema?services=all",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"all",
+						"schema"
+					],
+					"query": [
+						{
+							"key": "services",
+							"value": "all"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Customer By Email",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/customers/search?searchCriteria[filterGroups][0][filters][0][field]=email&searchCriteria[filterGroups][0][filters][0][value]=cerebix1@gmail.com&searchCriteria[filterGroups][0][filters][0][condition_type]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"customers",
+						"search"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][field]",
+							"value": "email"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][value]",
+							"value": "cerebix1@gmail.com"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][condition_type]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Categories https://wfo.rvadv.com/rest/V1/products?searchCriteria[pageSize]=20 Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/categories",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Magento Show All Enabled Products with PIM Unique Key",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products?searchCriteria[pageSize]=100&searchCriteria[current_page]=1&searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&searchCriteria[filter_groups][1][filters][0][field]=status&searchCriteria[filter_groups][1][filters][0][value]=2&searchCriteria[filter_groups][1][filters][0][condition_type]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[pageSize]",
+							"value": "100"
+						},
+						{
+							"key": "searchCriteria[current_page]",
+							"value": "1"
+						},
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][field]",
+							"value": "pim_unique_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][condition_type]",
+							"value": "notnull"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][field]",
+							"value": "status"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][value]",
+							"value": "2"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][condition_type]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Product By SKU https://wfo.rvadv.com/rest/V1/products/[sku]",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"product\":{\r\n        \"price\":\"9.63\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products/124985831",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products",
+						"124985831"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Product By Loft ID https://wfo.rvadv.com/rest/V1/products/[sku] Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"product\":{\r\n        \"price\":\"9.63\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products?searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&searchCriteria[filter_groups][1][filters][0][field]=loft_id&searchCriteria[filter_groups][1][filters][0][value]=124985831&searchCriteria[filter_groups][1][filters][0][conditionType]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][field]",
+							"value": "pim_unique_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][condition_type]",
+							"value": "notnull"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][field]",
+							"value": "loft_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][value]",
+							"value": "124985831"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][conditionType]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "customer by id https://wfo.rvadv.com/rest/V1/customers/[id]",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"product\":{\r\n        \"price\":\"9.63\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/customers/1",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"customers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Configurable Products https://wfo.rvadv.com/rest/V1/products/[sku] Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"product\":{\r\n        \"price\":\"9.63\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products?searchCriteria[pageSize]=100&searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&searchCriteria[filter_groups][1][filters][0][field]=type_id&searchCriteria[filter_groups][1][filters][0][value]=configurable&searchCriteria[filter_groups][1][filters][0][conditionType]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[pageSize]",
+							"value": "100"
+						},
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][field]",
+							"value": "pim_unique_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][condition_type]",
+							"value": "notnull"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][field]",
+							"value": "type_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][value]",
+							"value": "configurable"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][conditionType]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Multiple Products based on ID List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"product\":{\r\n        \"price\":\"9.63\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products?searchCriteria[filter_groups][0][filters][0][field]=pim_unique_id&searchCriteria[filter_groups][0][filters][0][condition_type]=notnull&searchCriteria[filter_groups][1][filters][0][field]=entity_id&searchCriteria[filter_groups][1][filters][0][value]=7483,7484&searchCriteria[filter_groups][1][filters][0][conditionType]=in",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][field]",
+							"value": "pim_unique_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][0][filters][0][condition_type]",
+							"value": "notnull"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][field]",
+							"value": "entity_id"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][value]",
+							"value": "7483,7484"
+						},
+						{
+							"key": "searchCriteria[filter_groups][1][filters][0][conditionType]",
+							"value": "in"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Media for a specific product by sku",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"id\": 13630,\r\n        \"media_type\": \"image\",\r\n        \"label\": null,\r\n        \"position\": 0,\r\n        \"disabled\": false,\r\n        \"types\": [],\r\n        \"file\": \"/f/u/fusion-awesome-oatmeal-sofa-39-00KP-right1.jpg\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products/857087572/media",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products",
+						"857087572",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Magento get attribute set list",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products/attribute-sets/sets/list?searchCriteria=0",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products",
+						"attribute-sets",
+						"sets",
+						"list"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[pageSize]",
+							"value": "20",
+							"disabled": true
+						},
+						{
+							"key": "searchCriteria",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Magento get all attributes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products/attribute-sets/sets/list?searchCriteria=0",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products",
+						"attribute-sets",
+						"sets",
+						"list"
+					],
+					"query": [
+						{
+							"key": "searchCriteria[pageSize]",
+							"value": "20",
+							"disabled": true
+						},
+						{
+							"key": "searchCriteria",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pull All Categories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://www.woodstockoutlet.com/rest/V1/categories/list/?searchCriteria[pageSize]=100",
+					"protocol": "https",
+					"host": [
+						"www",
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"categories",
+						"list",
+						""
+					],
+					"query": [
+						{
+							"key": "searchCriteria[pageSize]",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pull Color Attribute",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products/attributes/color",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products",
+						"attributes",
+						"color"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Brand Options",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/products/attributes/brand/options",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"products",
+						"attributes",
+						"brand",
+						"options"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Pending Orders",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/orders/?searchCriteria[filterGroups][0][filters][0][field]=status&searchCriteria[filterGroups][0][filters][0][value]=pending&searchCriteria[filterGroups][0][filters][0][conditionType]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"orders",
+						""
+					],
+					"query": [
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][field]",
+							"value": "status"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][value]",
+							"value": "pending"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][conditionType]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Orders For a specific customer by customer ID",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/orders/?searchCriteria[filterGroups][0][filters][0][field]=customer_id&searchCriteria[filterGroups][0][filters][0][value]=1&searchCriteria[filterGroups][0][filters][0][conditionType]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"orders",
+						""
+					],
+					"query": [
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][field]",
+							"value": "customer_id"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][value]",
+							"value": "1"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][conditionType]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Orders For a specific customer by customer Email",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{magtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://woodstockoutlet.com/rest/V1/orders/?searchCriteria[filterGroups][0][filters][0][field]=customer_email&searchCriteria[filterGroups][0][filters][0][value]=cerebix1@gmail.com&searchCriteria[filterGroups][0][filters][0][conditionType]=eq",
+					"protocol": "https",
+					"host": [
+						"woodstockoutlet",
+						"com"
+					],
+					"path": [
+						"rest",
+						"V1",
+						"orders",
+						""
+					],
+					"query": [
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][field]",
+							"value": "customer_email"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][value]",
+							"value": "cerebix1@gmail.com"
+						},
+						{
+							"key": "searchCriteria[filterGroups][0][filters][0][conditionType]",
+							"value": "eq"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "magtoken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
