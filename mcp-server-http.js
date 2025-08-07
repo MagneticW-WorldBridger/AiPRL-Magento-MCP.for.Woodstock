@@ -346,14 +346,28 @@ app.get('/env/check', (req, res) => {
 app.get('/sse', async (req, res) => {
   console.log('SSE connection request received');
   
-  const transport = new SSEServerTransport('/sse', res);
-  
   try {
+    // Check if token service is working before connecting
+    const tokenStatus = await tokenService.getTokenStatus();
+    console.log('Token service check passed:', tokenStatus.hasToken ? 'Token available' : 'No token');
+    
+    const transport = new SSEServerTransport('/sse', res);
     await server.connect(transport);
-    console.log('MCP Server connected via SSE');
+    console.log('MCP Server connected via SSE successfully');
+    
   } catch (error) {
-    console.error('Failed to connect MCP server:', error);
-    res.status(500).send('Failed to establish SSE connection');
+    console.error('Failed to connect MCP server:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    // Send proper SSE error response
+    res.writeHead(500, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.write(`event: error\ndata: ${JSON.stringify({ error: error.message })}\n\n`);
+    res.end();
   }
 });
 
