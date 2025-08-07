@@ -326,6 +326,22 @@ app.get('/token/status', async (req, res) => {
   }
 });
 
+// Environment check endpoint (for debugging Railway)
+app.get('/env/check', (req, res) => {
+  res.json({
+    status: 'success',
+    timestamp: new Date().toISOString(),
+    environment: {
+      DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
+      MAGENTO_BASE_URL: process.env.MAGENTO_BASE_URL || 'MISSING',
+      MAGENTO_USERNAME: process.env.MAGENTO_USERNAME ? 'SET' : 'MISSING',
+      MAGENTO_PASSWORD: process.env.MAGENTO_PASSWORD ? 'SET' : 'MISSING',
+      NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED || 'MISSING',
+      PORT: process.env.PORT || 'MISSING'
+    }
+  });
+});
+
 // SSE endpoint for MCP
 app.get('/sse', async (req, res) => {
   console.log('SSE connection request received');
